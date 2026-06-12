@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% block title %}Upload Photos · BSH Picnic{% endblock %}
+
+{% block content %}
+<div class="form-page">
+  <h2 class="page-heading">Upload Your Photos &amp; Videos</h2>
+  <p class="page-subtext">
+    Hi <strong>{{ user_name }}</strong>! Select one or more photos or videos from your phone or camera.
+    You can add titles and captions after uploading.
+  </p>
+
+  <form id="upload-form" action="{{ url_for('upload') }}" method="post" enctype="multipart/form-data">
+    <div class="drop-zone" id="drop-zone">
+      <div class="drop-zone-inner">
+        <div class="drop-icon">📷</div>
+        <p class="drop-text">Tap or drag photos &amp; videos here</p>
+        <p class="drop-sub">JPG, PNG, HEIC, MP4, MOV and more · up to 500 MB per file</p>
+        <label class="btn btn-outline pick-files-btn">
+          Choose Files
+          <input type="file" id="file-input" name="files" multiple accept="image/*,video/*" hidden>
+        </label>
+      </div>
+    </div>
+
+    <div id="preview-area" class="preview-area hidden"></div>
+
+    <div id="upload-actions" class="upload-actions hidden">
+      <button type="submit" class="btn btn-primary" id="submit-btn">
+        Upload <span id="file-count"></span>
+      </button>
+      <button type="button" class="btn btn-ghost" id="clear-btn">Clear</button>
+    </div>
+
+    <div id="progress-bar-wrap" class="progress-wrap hidden">
+      <div class="progress-bar">
+        <div class="progress-fill" id="progress-fill"></div>
+      </div>
+      <p class="progress-label" id="progress-label">Uploading…</p>
+    </div>
+  </form>
+
+  <div class="upload-tip">
+    <a href="{{ url_for('gallery') }}">View your gallery &rarr;</a>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/upload.js') }}"></script>
+{% endblock %}

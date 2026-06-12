@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block title %}Admin Login · BSH Picnic{% endblock %}
+
+{% block content %}
+<div class="form-page form-page-narrow">
+  <h2 class="page-heading">Admin Access</h2>
+  <form action="{{ url_for('admin_login') }}" method="post" class="name-form">
+    <div class="form-group">
+      <label for="password" class="form-label">Password</label>
+      <input type="password" id="password" name="password" class="form-input" required autofocus>
+    </div>
+    <button type="submit" class="btn btn-primary btn-full">Sign In</button>
+  </form>
+</div>
+{% endblock %}

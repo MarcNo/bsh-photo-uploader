@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}Bull Stone House Picnic Photos{% endblock %}</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Source+Sans+3:wght@300;400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+  {% block head %}{% endblock %}
+</head>
+<body>
+  <header class="site-header">
+    <div class="banner">
+      <div class="banner-overlay"></div>
+      <div class="banner-content">
+        <div class="banner-year">159<sup>th</sup> Annual</div>
+        <h1 class="banner-title">William Bull &amp; Sarah Wells<br><span>Family Picnic</span></h1>
+        <div class="banner-subtitle">Photo &amp; Video Collection</div>
+      </div>
+    </div>
+    {% if session.get('user_name') %}
+    <nav class="user-nav">
+      <div class="container">
+        <span class="nav-greeting">Welcome, {{ session.user_name }}</span>
+        <div class="nav-links">
+          <a href="{{ url_for('upload') }}">Upload</a>
+          <a href="{{ url_for('gallery') }}">My Gallery</a>
+          <a href="{{ url_for('logout') }}">Sign Out</a>
+        </div>
+      </div>
+    </nav>
+    {% elif session.get('is_admin') %}
+    <nav class="user-nav admin-nav">
+      <div class="container">
+        <span class="nav-greeting">&#9679; Admin Mode</span>
+        <div class="nav-links">
+          <a href="{{ url_for('admin_dashboard') }}">Dashboard</a>
+          <a href="{{ url_for('admin_logout') }}">Sign Out</a>
+        </div>
+      </div>
+    </nav>
+    {% endif %}
+  </header>
+
+  <main class="main-content">
+    <div class="container">
+      {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+          {% for category, message in messages %}
+          <div class="alert alert-{{ category }}">{{ message }}</div>
+          {% endfor %}
+        {% endif %}
+      {% endwith %}
+      {% block content %}{% endblock %}
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <p>
+        <a href="https://www.bullstonehouse.org/" target="_blank" rel="noopener">Bull Stone House Historical Society</a>
+        &nbsp;·&nbsp; 159<sup>th</sup> Annual William Bull &amp; Sarah Wells Family Picnic
+      </p>
+    </div>
+  </footer>
+
+  {% block scripts %}{% endblock %}
+</body>
+</html>

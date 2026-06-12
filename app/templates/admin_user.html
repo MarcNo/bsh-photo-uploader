@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+{% block title %}{{ user.first_name }} {{ user.last_name }} · Admin{% endblock %}
+
+{% block content %}
+<div class="admin-page">
+  <a href="{{ url_for('admin_dashboard') }}" class="back-link">&larr; Back to Dashboard</a>
+
+  <h2 class="page-heading">{{ user.first_name }} {{ user.last_name }}</h2>
+  <p class="muted">
+    Folder: <code>/DATA/bsh/picnic-images/{{ user.slug }}/</code>
+    &nbsp;·&nbsp; {{ user.upload_count }} upload{{ 's' if user.upload_count != 1 }}
+    &nbsp;·&nbsp; Joined {{ user.created_at[:10] }}
+  </p>
+
+  {% if uploads %}
+  <div class="gallery-grid">
+    {% for item in uploads %}
+    <div class="gallery-card">
+      <div class="media-thumb">
+        {% if item.file_type == 'image' %}
+        <a href="{{ url_for('admin_serve_media', slug=user.slug, filename=item.filename) }}" target="_blank">
+          <img
+            src="{{ url_for('admin_serve_media', slug=user.slug, filename=item.filename) }}"
+            alt="{{ item.title or item.original_name }}"
+            loading="lazy"
+            class="thumb-img"
+          >
+        </a>
+        {% else %}
+        <video
+          src="{{ url_for('admin_serve_media', slug=user.slug, filename=item.filename) }}"
+          class="thumb-video"
+          preload="metadata"
+          controls
+        ></video>
+        <div class="video-badge">▶ Video</div>
+        {% endif %}
+      </div>
+      <div class="card-body">
+        {% if item.title %}<p class="card-title">{{ item.title }}</p>{% endif %}
+        {% if item.caption %}<p class="card-caption">{{ item.caption }}</p>{% endif %}
+        <p class="upload-time">{{ item.uploaded_at[:16] }} · {{ item.original_name or item.filename }}</p>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+  {% else %}
+  <p class="muted">This user has no uploads.</p>
+  {% endif %}
+</div>
+{% endblock %}

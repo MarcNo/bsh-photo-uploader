@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+{% block title %}My Gallery · BSH Picnic{% endblock %}
+
+{% block content %}
+<div class="gallery-page">
+  <div class="gallery-header">
+    <h2 class="page-heading">{{ user_name }}'s Gallery</h2>
+    <a href="{{ url_for('upload') }}" class="btn btn-primary">+ Add More</a>
+  </div>
+
+  {% if not uploads %}
+  <div class="empty-state">
+    <div class="empty-icon">🖼️</div>
+    <p>You haven't uploaded anything yet.</p>
+    <a href="{{ url_for('upload') }}" class="btn btn-primary">Upload Now</a>
+  </div>
+  {% else %}
+  <p class="gallery-count">{{ uploads|length }} item{{ 's' if uploads|length != 1 }}</p>
+
+  <div class="gallery-grid">
+    {% for item in uploads %}
+    <div class="gallery-card" data-id="{{ item.id }}">
+      <div class="media-thumb">
+        {% if item.file_type == 'image' %}
+        <img
+          src="{{ url_for('serve_media', slug=user_slug, filename=item.filename) }}"
+          alt="{{ item.title or item.original_name }}"
+          loading="lazy"
+          class="thumb-img"
+        >
+        {% else %}
+        <video
+          src="{{ url_for('serve_media', slug=user_slug, filename=item.filename) }}"
+          class="thumb-video"
+          preload="metadata"
+          controls
+        ></video>
+        <div class="video-badge">▶ Video</div>
+        {% endif %}
+      </div>
+
+      <div class="card-body">
+        <div class="meta-edit">
+          <input
+            type="text"
+            class="meta-title"
+            placeholder="Add a title…"
+            value="{{ item.title or '' }}"
+            data-field="title"
+            data-id="{{ item.id }}"
+          >
+          <textarea
+            class="meta-caption"
+            placeholder="Add a caption…"
+            data-field="caption"
+            data-id="{{ item.id }}"
+            rows="2"
+          >{{ item.caption or '' }}</textarea>
+          <div class="card-actions">
+            <button class="btn-save btn-sm" data-id="{{ item.id }}">Save</button>
+            <button class="btn-delete btn-sm btn-danger-sm" data-id="{{ item.id }}">Delete</button>
+          </div>
+        </div>
+        <p class="upload-time">Uploaded {{ item.uploaded_at[:10] }}</p>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+  {% endif %}
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/gallery.js') }}"></script>
+{% endblock %}

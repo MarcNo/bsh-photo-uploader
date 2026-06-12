@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+{% block title %}Welcome · Bull Stone House Picnic Photos{% endblock %}
+
+{% block content %}
+<div class="landing-wrap">
+  <div class="landing-card">
+    <div class="landing-icon">📸</div>
+    <h2 class="landing-heading">Share Your Picnic Memories</h2>
+    <p class="landing-subtext">
+      Upload your photos and videos from today's celebration. They'll be collected
+      for everyone in the Bull &amp; Wells family to enjoy.
+    </p>
+
+    <form action="{{ url_for('enter_code') }}" method="post" class="code-form">
+      <label for="event_code" class="form-label">Enter Your Event Code</label>
+      <div class="code-input-row">
+        <input
+          type="text"
+          id="event_code"
+          name="event_code"
+          class="code-input"
+          placeholder="e.g. WELLSBULL159"
+          autocomplete="off"
+          autocapitalize="characters"
+          spellcheck="false"
+          required
+        >
+        <button type="submit" class="btn btn-primary">Go &rarr;</button>
+      </div>
+      <p class="code-hint">Check your printed invite or ask at the welcome table.</p>
+    </form>
+  </div>
+
+  <div class="landing-info">
+    <div class="info-block">
+      <div class="info-icon">🏡</div>
+      <div>
+        <strong>Bull Stone House</strong>
+        <p>Home of the William Bull &amp; Sarah Wells Historical Society, guardians of this treasured family tradition since the 1860s.</p>
+      </div>
+    </div>
+    <div class="info-block">
+      <div class="info-icon">🌿</div>
+      <div>
+        <strong>159 Years of Reunion</strong>
+        <p>A century and a half of family gathering, laughter, and shared heritage — and we're still counting.</p>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

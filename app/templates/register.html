@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% block title %}Who Are You? · BSH Picnic Photos{% endblock %}
+
+{% block content %}
+<div class="form-page">
+  <h2 class="page-heading">Tell us your name</h2>
+  <p class="page-subtext">
+    Your photos will be saved under your name so the family can find them later.
+  </p>
+
+  <form action="{{ url_for('register') }}" method="post" class="name-form">
+    <div class="form-row">
+      <div class="form-group">
+        <label for="first_name" class="form-label">First Name</label>
+        <input
+          type="text"
+          id="first_name"
+          name="first_name"
+          class="form-input"
+          placeholder="Margaret"
+          autocomplete="given-name"
+          required
+        >
+      </div>
+      <div class="form-group">
+        <label for="last_name" class="form-label">Last Name</label>
+        <input
+          type="text"
+          id="last_name"
+          name="last_name"
+          class="form-input"
+          placeholder="Wells"
+          autocomplete="family-name"
+          required
+        >
+      </div>
+    </div>
+    <button type="submit" class="btn btn-primary btn-full">Continue to Upload &rarr;</button>
+  </form>
+</div>
+{% endblock %}
