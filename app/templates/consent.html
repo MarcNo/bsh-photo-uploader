@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+{% block title %}Photo Use Agreement · BSH Picnic{% endblock %}
+
+{% block content %}
+<div class="form-page consent-page">
+  <div class="consent-card">
+    <div class="consent-icon">📜</div>
+    <h2 class="page-heading">Photo &amp; Video Use Agreement</h2>
+    <p class="page-subtext">
+      Before you upload, please read and agree to the following.
+    </p>
+
+    <div class="consent-body">
+      <p>
+        By uploading photos or videos to this site, you grant the
+        <strong>William Bull &amp; Sarah Wells Bull Stone House Historical Society</strong>
+        a permanent, royalty-free license to use, reproduce, publish, and
+        distribute the submitted images and videos in any manner they see fit.
+        This includes, but is not limited to, use in print publications,
+        social media, the Society's website, future picnic materials, and
+        historical archives.
+      </p>
+      <p>
+        You confirm that you have the right to share any photos or videos
+        you upload, and that the people depicted in them have consented to
+        being photographed in a public family gathering.
+      </p>
+      <p>
+        Your contact information (if provided) will be used solely by the
+        Society and will not be shared with third parties.
+      </p>
+    </div>
+
+    <form action="{{ url_for('consent') }}" method="post" class="consent-form">
+      <label class="consent-check-label">
+        <input type="checkbox" name="agreed" value="1" id="agreed" required>
+        <span>
+          I have read and agree to the photo &amp; video use terms above.
+        </span>
+      </label>
+
+      <button type="submit" class="btn btn-primary btn-full consent-btn">
+        I Agree — Continue &rarr;
+      </button>
+    </form>
+
+    <p class="consent-decline">
+      If you do not agree, you are welcome to enjoy the picnic without uploading photos.
+      <a href="{{ url_for('index') }}">Return to home</a>.
+    </p>
+  </div>
+</div>
+{% endblock %}

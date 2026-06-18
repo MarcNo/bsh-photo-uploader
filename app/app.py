@@ -68,9 +68,11 @@ def close_db(exc=None):
 
 
 def init_db():
-    os.makedirs(os.path.dirname(DB_PATH), exist_ok=True)
-    os.makedirs(UPLOAD_BASE, exist_ok=True)
-    db = sqlite3.connect(DB_PATH)
+    upload_base = os.environ.get("UPLOAD_BASE", "/DATA/bsh/picnic-images")
+    db_path     = os.environ.get("DB_PATH",     "/DATA/bsh/picnic.db")
+    os.makedirs(os.path.dirname(db_path), exist_ok=True)
+    os.makedirs(upload_base, exist_ok=True)
+    db = sqlite3.connect(db_path)
     db.executescript("""
         CREATE TABLE IF NOT EXISTS stats (
             id          INTEGER PRIMARY KEY,
@@ -88,6 +90,9 @@ def init_db():
             first_name  TEXT NOT NULL,
             last_name   TEXT NOT NULL,
             slug        TEXT UNIQUE NOT NULL,
+            email       TEXT,
+            phone       TEXT,
+            consented_at DATETIME,
             created_at  DATETIME DEFAULT CURRENT_TIMESTAMP,
             upload_count INTEGER DEFAULT 0
         );
@@ -109,6 +114,16 @@ def init_db():
             created_at  DATETIME DEFAULT CURRENT_TIMESTAMP
         );
     """)
+    # Migrate existing databases that predate the email/phone/consent columns
+    for col, typedef in [
+        ("email",        "TEXT"),
+        ("phone",        "TEXT"),
+        ("consented_at", "DATETIME"),
+    ]:
+        try:
+            db.execute(f"ALTER TABLE users ADD COLUMN {col} {typedef}")
+        except sqlite3.OperationalError:
+            pass  # column already exists
     db.commit()
     db.close()
 
@@ -149,15 +164,27 @@ def make_user_slug(first, last):
     return slug
 
 
-def get_or_create_user(first_name, last_name):
+def get_or_create_user(first_name, last_name, email=None, phone=None, consented_at=None):
     db = get_db()
     slug = make_user_slug(first_name, last_name)
     row = db.execute("SELECT * FROM users WHERE slug = ?", (slug,)).fetchone()
     if row:
+        # Update contact info if provided on a return visit
+        db.execute(
+            """UPDATE users SET email = COALESCE(?, email),
+               phone = COALESCE(?, phone),
+               consented_at = COALESCE(consented_at, ?)
+               WHERE slug = ?""",
+            (email or None, phone or None, consented_at, slug)
+        )
+        db.commit()
+        row = db.execute("SELECT * FROM users WHERE slug = ?", (slug,)).fetchone()
         return dict(row)
     db.execute(
-        "INSERT INTO users (first_name, last_name, slug) VALUES (?, ?, ?)",
-        (first_name.strip(), last_name.strip(), slug)
+        """INSERT INTO users (first_name, last_name, slug, email, phone, consented_at)
+           VALUES (?, ?, ?, ?, ?, ?)""",
+        (first_name.strip(), last_name.strip(), slug,
+         email or None, phone or None, consented_at)
     )
     db.commit()
     row = db.execute("SELECT * FROM users WHERE slug = ?", (slug,)).fetchone()
@@ -213,20 +240,40 @@ def enter_code():
     return redirect(url_for('register'))
 
 
+@app.route('/consent', methods=['GET', 'POST'])
+def consent():
+    if not session.get('code_verified'):
+        return redirect(url_for('index'))
+    if request.method == 'POST':
+        if request.form.get('agreed') == '1':
+            session['consent_given'] = True
+            session['consented_at'] = datetime.utcnow().isoformat()
+            return redirect(url_for('register'))
+        flash('You must agree to the terms to continue.', 'error')
+    return render_template('consent.html')
+
+
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     if not session.get('code_verified'):
         return redirect(url_for('index'))
+    if not session.get('consent_given'):
+        return redirect(url_for('consent'))
 
     if request.method == 'POST':
         first = request.form.get('first_name', '').strip()
-        last = request.form.get('last_name', '').strip()
+        last  = request.form.get('last_name',  '').strip()
         if not first or not last:
             flash('Please enter both your first and last name.', 'error')
             return render_template('register.html')
 
-        user = get_or_create_user(first, last)
-        session['user_id'] = user['id']
+        email = request.form.get('email', '').strip() or None
+        phone = request.form.get('phone', '').strip() or None
+        consented_at = session.get('consented_at')
+
+        user = get_or_create_user(first, last, email=email, phone=phone,
+                                  consented_at=consented_at)
+        session['user_id']   = user['id']
         session['user_slug'] = user['slug']
         session['user_name'] = f"{user['first_name']} {user['last_name']}"
         return redirect(url_for('upload'))

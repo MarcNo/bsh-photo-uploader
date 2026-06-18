@@ -6,11 +6,36 @@
   <a href="{{ url_for('admin_dashboard') }}" class="back-link">&larr; Back to Dashboard</a>
 
   <h2 class="page-heading">{{ user.first_name }} {{ user.last_name }}</h2>
-  <p class="muted">
-    Folder: <code>/DATA/bsh/picnic-images/{{ user.slug }}/</code>
-    &nbsp;·&nbsp; {{ user.upload_count }} upload{{ 's' if user.upload_count != 1 }}
-    &nbsp;·&nbsp; Joined {{ user.created_at[:10] }}
-  </p>
+  <div class="user-meta-grid">
+    <div class="user-meta-item">
+      <span class="user-meta-label">Folder</span>
+      <code>/DATA/bsh/picnic-images/{{ user.slug }}/</code>
+    </div>
+    <div class="user-meta-item">
+      <span class="user-meta-label">Email</span>
+      {% if user.email %}<a href="mailto:{{ user.email }}">{{ user.email }}</a>{% else %}<span class="muted">not provided</span>{% endif %}
+    </div>
+    <div class="user-meta-item">
+      <span class="user-meta-label">Phone</span>
+      {% if user.phone %}{{ user.phone }}{% else %}<span class="muted">not provided</span>{% endif %}
+    </div>
+    <div class="user-meta-item">
+      <span class="user-meta-label">Consent</span>
+      {% if user.consented_at %}
+        <span class="consent-yes">✓ Agreed {{ user.consented_at[:16] }} UTC</span>
+      {% else %}
+        <span class="muted">not recorded</span>
+      {% endif %}
+    </div>
+    <div class="user-meta-item">
+      <span class="user-meta-label">Uploads</span>
+      {{ user.upload_count }}
+    </div>
+    <div class="user-meta-item">
+      <span class="user-meta-label">Joined</span>
+      {{ user.created_at[:10] }}
+    </div>
+  </div>
 
   {% if uploads %}
   <div class="gallery-grid">

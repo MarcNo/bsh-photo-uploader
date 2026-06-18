@@ -11,7 +11,8 @@ services:
       DB_PATH: "/DATA/bsh/picnic.db"
     volumes:
       # Persist uploads and database on your Fedora host
-      - /DATA/bsh:/DATA/bsh
+      # :z adds the SELinux label needed on Fedora/RHEL hosts
+      - /DATA/bsh:/DATA/bsh:z
     ports:
       - "127.0.0.1:5000:5000"   # only exposed on loopback; nginx proxies it
     healthcheck:
@@ -27,6 +28,7 @@ services:
     ports:
       - "80:80"
     volumes:
-      - ./nginx/nginx.conf:/etc/nginx/conf.d/default.conf:ro
+      # :z adds the SELinux label needed on Fedora/RHEL hosts
+      - ./nginx/nginx.conf:/etc/nginx/conf.d/default.conf:z
     depends_on:
       - app

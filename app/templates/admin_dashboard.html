@@ -33,8 +33,10 @@
       <thead>
         <tr>
           <th>Name</th>
-          <th>Folder</th>
+          <th>Email</th>
+          <th>Phone</th>
           <th>Uploads</th>
+          <th>Consented</th>
           <th>Joined</th>
           <th></th>
         </tr>
@@ -43,8 +45,10 @@
         {% for u in users %}
         <tr>
           <td><strong>{{ u.first_name }} {{ u.last_name }}</strong></td>
-          <td><code>{{ u.slug }}</code></td>
+          <td>{% if u.email %}<a href="mailto:{{ u.email }}">{{ u.email }}</a>{% else %}<span class="muted">—</span>{% endif %}</td>
+          <td>{% if u.phone %}{{ u.phone }}{% else %}<span class="muted">—</span>{% endif %}</td>
           <td>{{ u.upload_count }}</td>
+          <td>{% if u.consented_at %}<span class="consent-yes" title="{{ u.consented_at }}">✓</span>{% else %}<span class="muted">—</span>{% endif %}</td>
           <td>{{ u.created_at[:10] }}</td>
           <td><a href="{{ url_for('admin_user', user_id=u.id) }}" class="btn-sm">View &rarr;</a></td>
         </tr>

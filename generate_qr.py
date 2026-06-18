@@ -26,7 +26,7 @@ qr = qrcode.QRCode(
 qr.add_data(URL)
 qr.make(fit=True)
 
-img_qr = qr.make_image(
+img_qr_raw = qr.make_image(
     image_factory=StyledPilImage,
     color_mask=SolidFillColorMask(
         back_color=(247, 243, 234),   # ivory
@@ -34,6 +34,8 @@ img_qr = qr.make_image(
     ),
 )
 
+# Convert to plain RGB PIL Image so paste() can determine the region size
+img_qr = img_qr_raw.convert("RGB")
 qr_size = img_qr.size[0]
 
 # ── Build poster card ────────────────────────────────────────
@@ -56,9 +58,9 @@ except OSError:
 draw.text((CARD_W // 2, 30), "159th Annual BSH Family Picnic",
           fill=(201, 146, 42), font=font_title, anchor="mm")
 
-# QR code centred
+# QR code centred — use 4-tuple box (left, top, right, bottom)
 qr_x = (CARD_W - qr_size) // 2
-card.paste(img_qr, (qr_x, 70))
+card.paste(img_qr, (qr_x, 70, qr_x + qr_size, 70 + qr_size))
 
 y = 70 + qr_size + 12
 

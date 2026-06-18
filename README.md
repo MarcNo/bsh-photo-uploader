@@ -209,6 +209,3 @@ tar czf bsh-picnic-backup-$(date +%Y%m%d).tar.gz /DATA/bsh/
 ## License
 
 GPL-3.0 — see [LICENSE](LICENSE).
-=======
-# bsh-photo-uploader
-Photo uploader for Bull Stone House picnic

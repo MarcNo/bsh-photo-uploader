@@ -1,17 +1,18 @@
 {% extends "base.html" %}
-{% block title %}Who Are You? · BSH Picnic Photos{% endblock %}
+{% block title %}Your Details · BSH Picnic Photos{% endblock %}
 
 {% block content %}
 <div class="form-page">
-  <h2 class="page-heading">Tell us your name</h2>
+  <h2 class="page-heading">Tell us about yourself</h2>
   <p class="page-subtext">
     Your photos will be saved under your name so the family can find them later.
+    Email and phone are optional — they help us reach you if we have questions about your photos.
   </p>
 
   <form action="{{ url_for('register') }}" method="post" class="name-form">
     <div class="form-row">
       <div class="form-group">
-        <label for="first_name" class="form-label">First Name</label>
+        <label for="first_name" class="form-label">First Name <span class="required">*</span></label>
         <input
           type="text"
           id="first_name"
@@ -23,7 +24,7 @@
         >
       </div>
       <div class="form-group">
-        <label for="last_name" class="form-label">Last Name</label>
+        <label for="last_name" class="form-label">Last Name <span class="required">*</span></label>
         <input
           type="text"
           id="last_name"
@@ -35,6 +36,32 @@
         >
       </div>
     </div>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label for="email" class="form-label">Email <span class="optional">optional</span></label>
+        <input
+          type="email"
+          id="email"
+          name="email"
+          class="form-input"
+          placeholder="margaret@example.com"
+          autocomplete="email"
+        >
+      </div>
+      <div class="form-group">
+        <label for="phone" class="form-label">Phone <span class="optional">optional</span></label>
+        <input
+          type="tel"
+          id="phone"
+          name="phone"
+          class="form-input"
+          placeholder="(845) 555-0100"
+          autocomplete="tel"
+        >
+      </div>
+    </div>
+
     <button type="submit" class="btn btn-primary btn-full">Continue to Upload &rarr;</button>
   </form>
 </div>
