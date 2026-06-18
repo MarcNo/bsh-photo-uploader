@@ -56,7 +56,7 @@ sup { font-size: 0.6em; vertical-align: super; }
   position: relative;
   height: 220px;
   background:
-    url('https://www.bullstonehouse.org/uploads/7/5/3/6/7536446/background-images/1570600035.jpg')
+    url('../img/banner.jpg')
     center 30% / cover no-repeat;
   overflow: hidden;
 }
